@@ -82,33 +82,28 @@ void Miele::poll() {
     return;
   }
 
-  WiFiClient *client = http.getStreamPtr();
+  http.getStream([](void* instance, const String& type, const String& data) {
+    Miele* miele = static_cast<Miele*>(instance);
 
-  while (client->connected()) {
-    if (!client->available()) {
-      delay(100);
-      continue;
-    }
-
-    String line = client->readStringUntil('\n');
-
-    if (!line.startsWith("data: ")) {
-      continue;
+    if (type != "devices" || data.length() == 0) {
+      return;
     }
 
     JsonDocument doc;
     DeserializationError error = deserializeJson(
       doc,
-      line.substring(6),
-      DeserializationOption::Filter(this->filter)
+      data,
+      DeserializationOption::Filter(miele->filter)
     );
 
     if (error) {
-      continue;
+      return;
     }
 
-    this->callback(doc);
-  }
+    if (miele->callback) {
+      miele->callback(doc);
+    }
+  }, this);
 }
 
 void Miele::pollTask() {
