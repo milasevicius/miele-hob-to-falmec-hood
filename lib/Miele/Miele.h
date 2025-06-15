@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <ArduinoJson.h>
 #include <Preferences.h>
 
@@ -11,7 +12,7 @@ class Miele {
     String accessToken;
     Preferences preferences;
     JsonDocument filter;
-    void (*callback)(JsonDocument);
+    std::function<void(JsonDocument)> callback;
     void refreshAccessToken();
     void poll();
     void pollTask();
@@ -19,7 +20,7 @@ class Miele {
   public:
     Miele(String clientId, String clientSecret, String refreshToken);
     void begin();
-    void setFilter(void (*builder)(JsonDocument&));
-    void setCallback(void (*callback)(JsonDocument));
+    void setFilter(std::function<void(JsonDocument&)> builder);
+    void setCallback(std::function<void(JsonDocument)> callback);
     void autoPoll(uint32_t stackSize = 8192, uint32_t priority = 1, uint32_t core = 0);
 };

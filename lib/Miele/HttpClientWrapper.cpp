@@ -5,7 +5,7 @@ HttpClientWrapper::~HttpClientWrapper() {
   end();
 }
 
-void HttpClientWrapper::getStream(void (*callback)(void* instance, const String& type, const String& data), void* instance) {
+void HttpClientWrapper::getStream(std::function<void(void* instance, const String& type, const String& data)> callback, void* instance) {
   NetworkClient *client = getStreamPtr();
   String eventType = "";
   String eventData = "";

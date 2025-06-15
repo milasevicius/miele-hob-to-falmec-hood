@@ -18,12 +18,12 @@ void Miele::begin() {
   }
 }
 
-void Miele::setFilter(void (*builder)(JsonDocument&)) {
+void Miele::setFilter(std::function<void(JsonDocument&)> builder) {
   this->filter.clear();
   builder(this->filter);
 }
 
-void Miele::setCallback(void (*callback)(JsonDocument)) {
+void Miele::setCallback(std::function<void(JsonDocument)> callback) {
   this->callback = callback;
 }
 
