@@ -21,6 +21,21 @@ Falmec::Falmec(int pin) {
   );
   this->speed = 0;
   this->light = false;
+
+  xTaskCreateUniversal(
+    [](void* instance) {
+      auto* falmec = static_cast<Falmec*>(instance);
+      for (;;) {
+        falmec->sendCommandTask();
+      }
+    },
+    "sendCommandTask",
+    2048,
+    this,
+    2,
+    &sendCommandTaskHandle,
+    1
+  );
 }
 
 const byte* Falmec::getCommand(int speed, bool light) {
@@ -35,22 +50,24 @@ const byte* Falmec::getCommand(int speed, bool light) {
   return commands[speed][light];
 }
 
-void Falmec::sendCommand(const byte* command) {
-  this->tx->send(2, command);
+void Falmec::sendCommandTask() {
+  ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
+  this->tx->send(2, getCommand(this->speed, this->light));
 }
 
 void Falmec::set(int speed, bool light) {
   this->speed = speed;
   this->light = light;
-  this->sendCommand(this->getCommand(speed, light));
+  xTaskNotifyGive(this->sendCommandTaskHandle);
 }
 
 void Falmec::setSpeed(int speed) {
   this->speed = speed;
-  this->sendCommand(this->getCommand(speed, this->light));
+  xTaskNotifyGive(this->sendCommandTaskHandle);
 }
 
 void Falmec::setLight(bool light) {
   this->light = light;
-  this->sendCommand(this->getCommand(this->speed, light));
+  xTaskNotifyGive(this->sendCommandTaskHandle);
 }

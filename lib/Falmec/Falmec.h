@@ -7,8 +7,9 @@ class Falmec {
     RfSend *tx;
     int speed;
     bool light;
+    TaskHandle_t sendCommandTaskHandle;
     const byte* getCommand(int speed, bool light);
-    void sendCommand(const byte* command);
+    void sendCommandTask();
 
   public:
     Falmec(int pin);
