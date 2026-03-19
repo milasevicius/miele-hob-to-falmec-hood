@@ -23,7 +23,7 @@ Follow these steps to set up the ESP32 bridge and connect your Miele hob to your
 ### Prerequisites
 
 * Miele hob with [Miele@Home](https://www.miele.com/en/com/mielehome-5235.htm)
-* Falmec hood with [remote control](https://www.falmec.com/en-us/accessories/other-accessories/remote-control-2/)
+* Falmec hood with [remote control](https://www.falmec.com/en-us/accessories/other-accessories/remote-control-8034122708317/)
 * Apple smart home hub (e.g. [HomePod mini](https://www.apple.com/homepod-mini/))
 * ESP32 development board (e.g. [M5Stack Atom Lite](https://shop.m5stack.com/products/atom-lite-esp32-development-kit))
 * 433MHz RF transmitter module (e.g. [M5Stack RF433T Unit](https://shop.m5stack.com/products/rf-unit-433mhz-transmitter-syn115))
@@ -31,8 +31,8 @@ Follow these steps to set up the ESP32 bridge and connect your Miele hob to your
 
 ### Installation
 
-1. Get Miele [developer API credentials](https://www.miele.com/f/com/en/register_api.aspx)
-2. Get Miele refresh token using [Swagger OAuth2 authorization flow](https://www.miele.com/developer/openapi/index.html)
+1. Get Miele [developer API credentials](https://developer.miele.com/get-involved)
+2. Get Miele refresh token using [Swagger OAuth2 authorization flow](https://developer.miele.com/docs/swagger)
 3. Get Miele hob device ID (e.g. using Swagger `GET /devices` endpoint)
 4. Set up environment variables:
 ```bash
