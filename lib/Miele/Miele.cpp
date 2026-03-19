@@ -29,7 +29,7 @@ void Miele::setCallback(std::function<void(JsonDocument)> callback) {
 
 void Miele::refreshAccessToken() {
   HttpClientWrapper http;
-  String url = "https://api.mcs3.miele.com/thirdparty/token";
+  String url = "https://auth.domestic.miele-iot.com/partner/realms/mcs/protocol/openid-connect/token";
 
   http.begin(url);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
