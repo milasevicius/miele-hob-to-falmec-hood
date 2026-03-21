@@ -13,8 +13,8 @@ class Miele {
     Preferences preferences;
     JsonDocument filter;
     std::function<void(JsonDocument)> callback;
-    void refreshAccessToken();
-    void poll();
+    bool refreshAccessToken();
+    bool poll();
     void pollTask();
 
   public:

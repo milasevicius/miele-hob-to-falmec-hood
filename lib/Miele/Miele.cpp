@@ -27,7 +27,7 @@ void Miele::setCallback(std::function<void(JsonDocument)> callback) {
   this->callback = callback;
 }
 
-void Miele::refreshAccessToken() {
+bool Miele::refreshAccessToken() {
   HttpClientWrapper http;
   String url = "https://auth.domestic.miele-iot.com/partner/realms/mcs/protocol/openid-connect/token";
 
@@ -44,7 +44,7 @@ void Miele::refreshAccessToken() {
   int httpCode = http.POST(body);
 
   if (httpCode != HTTP_CODE_OK) {
-    return;
+    return false;
   }
 
   JsonDocument filter;
@@ -58,16 +58,17 @@ void Miele::refreshAccessToken() {
   );
 
   if (error) {
-    return;
+    return false;
   }
 
   this->accessToken = doc["access_token"].as<String>();
   this->refreshToken = doc["refresh_token"].as<String>();
 
   preferences.putString("REFRESH_TOKEN", this->refreshToken);
+  return true;
 }
 
-void Miele::poll() {
+bool Miele::poll() {
   HttpClientWrapper http;
   String url = "https://api.mcs3.miele.com/v1/devices/all/events";
 
@@ -79,7 +80,7 @@ void Miele::poll() {
   int httpCode = http.GET();
 
   if (httpCode != HTTP_CODE_OK) {
-    return;
+    return false;
   }
 
   http.getStream([](void* instance, const String& type, const String& data) {
@@ -104,17 +105,25 @@ void Miele::poll() {
       miele->callback(doc);
     }
   }, this);
+
+  return true;
 }
 
 void Miele::pollTask() {
   if (WiFi.status() != WL_CONNECTED) {
-    delay(100);
+    delay(1000);
     return;
   }
 
-  refreshAccessToken();
-  poll();
-  delay(100);
+  if (!refreshAccessToken()) {
+    delay(30000);
+    return;
+  }
+
+  if (!poll()) {
+    delay(30000);
+    return;
+  }
 }
 
 void Miele::autoPoll(uint32_t stackSize, uint32_t priority, uint32_t core) {
